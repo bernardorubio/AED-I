@@ -55,14 +55,7 @@ CROSS|threat_category|year
 - `ORDER`: chave de ordenação da `lista_ord`.
 - `GROUP`: campos de agrupamento da `lista_gen`.
 - `CROSS`: campos das duas organizações da `lista_cruz`.
-
-## Organização
-
-```
-src/     código-fonte
-tests/   testes dos módulos
-```
-
+- 
 ## Grupo
 
 Bernardo Rubio, Samuel Gurgel, CAio andrade
