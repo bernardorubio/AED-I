@@ -1,0 +1,18 @@
+# Compilação
+trabalho
+*.o
+build/
+
+# Executáveis de teste
+tests/bin/
+
+# Saídas geradas pelas execuções
+saidas/
+
+# Logs
+*.log
+
+# Arquivos do sistema e do editor
+.DS_Store
+Thumbs.db
+.vscode/
