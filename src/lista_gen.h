@@ -1,10 +1,10 @@
 #ifndef LISTA_GEN_H
 #define LISTA_GEN_H
 
-#include "item.h"
-#include <stdlib.h>
 #include <stdbool.h>
-#include <stdio.h>
+#include "item.h"
+
+
 
 
 typedef struct lista_gen LISTA_GEN;
