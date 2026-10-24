@@ -5,6 +5,8 @@
 
 
 
+
+
 typedef struct no_gen{
     int eh_atomo;
     union {
@@ -236,6 +238,35 @@ bool lista_gen_inserir(LISTA_GEN *lista, ITEM *item){
     lista->tamanho++;
     
     return true;
+}
+
+static int percorrer_nos(NO_GEN *no, void (*visitar)(ITEM *)){
+    int total = 0;
+    while (no != NULL)
+    {
+        if (no->eh_atomo == 0)
+        {
+            total += percorrer_nos(no->info.sublista.filhos, visitar);
+        }
+        else{
+            visitar(no->info.atomo);
+            total++;
+        }
+        no = no->prox;
+    }
+
+    return total;
+    
+}
+
+int lista_gen_percorrer(LISTA_GEN *lista, void(*visitar)(ITEM*)){
+    if (lista == NULL || visitar == NULL)
+    {
+        return LISTA_GEN_ERRO;
+    }
+
+    return percorrer_nos(lista->inicio, visitar);
+    
 }
 
 
