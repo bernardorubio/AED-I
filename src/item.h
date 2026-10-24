@@ -1,6 +1,8 @@
 #ifndef ITEM_H
 #define ITEM_H
 
+#include <stdbool.h>
+
 typedef struct item_ ITEM;
 
 ITEM *item_criar(char *linha, char **campos, int qtd_campos); //linha é a linha inteira do arq, item possui copias
