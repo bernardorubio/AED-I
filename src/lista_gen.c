@@ -54,7 +54,7 @@ int lista_gen_tamanho(LISTA_GEN *lista){
     
 }
 
-void apagar_nos(NO_GEN *no){
+static void apagar_nos(NO_GEN *no){
     while (no != NULL)
     {
         NO_GEN *proximo = no->prox;
@@ -82,6 +82,64 @@ void lista_gen_apagar(LISTA_GEN **lista){
     apagar_nos((*lista)->inicio);
     free(*lista);
     *lista = NULL;
+    
+}
+
+static NO_GEN *criar_sublista(char *rotulo){
+    if (rotulo == NULL)
+    {
+        return NULL;
+    }
+
+    NO_GEN *no = malloc(sizeof(NO_GEN));
+
+    if (no == NULL)
+    {
+        return NULL;
+    }
+
+    no->eh_atomo = 0;
+
+    no->info.sublista.rotulo = malloc(strlen(rotulo) + 1);
+
+    if (no->info.sublista.rotulo == NULL)
+    {
+        free(no);
+        return NULL;
+    }
+
+    strcpy(no->info.sublista.rotulo, rotulo);
+    
+
+
+    no->info.sublista.filhos = NULL;
+    no->prox = NULL;
+
+    return no;
+    
+    
+}
+
+static NO_GEN *criar_atomo(ITEM *item){
+    if (item == NULL)
+    {
+        return NULL;
+    }
+
+    NO_GEN *no = malloc(sizeof(NO_GEN));
+
+    if (no == NULL)
+    {
+        return NULL;
+    }
+    no->eh_atomo = 1;
+
+    no->info.atomo = item;
+    
+    no->prox = NULL;
+
+    return no;
+
     
 }
 
