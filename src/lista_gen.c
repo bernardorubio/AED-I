@@ -85,7 +85,7 @@ void lista_gen_apagar(LISTA_GEN **lista){
     
 }
 
-static NO_GEN *criar_sublista(char *rotulo){
+static NO_GEN *criar_sublista(const char *rotulo){
     if (rotulo == NULL)
     {
         return NULL;
@@ -141,6 +141,101 @@ static NO_GEN *criar_atomo(ITEM *item){
     return no;
 
     
+}
+
+static NO_GEN *buscar_ou_criar(NO_GEN **lista, const char *chave){
+    NO_GEN *atual = *lista;
+    NO_GEN *anterior = NULL;
+
+    while (atual != NULL)
+    {
+        if (!strcmp(atual->info.sublista.rotulo, chave))
+        {
+            return atual;
+        }
+
+        anterior = atual;
+        atual = atual->prox;
+        
+    }
+
+    NO_GEN *novo = criar_sublista(chave);
+
+    if (novo == NULL)
+    {
+        return NULL;
+    }
+    
+
+    if (anterior == NULL)
+    {
+        *lista = novo;
+    }
+    else{
+        anterior->prox = novo;
+    }
+
+    return novo;
+    
+    
+}
+
+static void inserir_no_fim(NO_GEN **lista, NO_GEN *novo){
+    if (*lista == NULL)
+    {
+        *lista = novo;
+        return;
+    }
+    NO_GEN *ultimo = *lista;
+    while (ultimo->prox != NULL)
+    {
+        ultimo = ultimo->prox;
+    }
+
+    ultimo->prox = novo;
+    
+    
+}
+
+bool lista_gen_inserir(LISTA_GEN *lista, ITEM *item){
+    if (lista == NULL || item == NULL)
+    {
+        return false;
+    }
+
+    const char *chave1 = item_get_texto(item, lista->coluna1);
+    const char *chave2 = item_get_texto(item, lista->coluna2);
+
+    if (chave1 == NULL || chave2 == NULL)
+    {
+        return false;
+    }
+
+    NO_GEN *grupo1 = buscar_ou_criar(&lista->inicio, chave1);
+    if (grupo1 == NULL)
+    {
+        return false;
+    }
+    
+    NO_GEN *grupo2 = buscar_ou_criar(&grupo1->info.sublista.filhos, chave2);
+
+    if (grupo2 == NULL)
+    {
+        return false;
+    }
+
+    NO_GEN *atomo = criar_atomo(item);
+
+    if (atomo == NULL)
+    {
+        return false;
+    }
+    
+    inserir_no_fim(&grupo2->info.sublista.filhos, atomo);
+
+    lista->tamanho++;
+    
+    return true;
 }
 
 
