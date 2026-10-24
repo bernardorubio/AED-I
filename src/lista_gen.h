@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include "item.h"
 
-
+#define LISTA_GEN_ERRO -1
 
 
 typedef struct lista_gen LISTA_GEN;

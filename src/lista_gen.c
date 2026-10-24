@@ -3,6 +3,8 @@
 
 #include "lista_gen.h"
 
+
+
 typedef struct no_gen{
     int eh_atomo;
     union {
@@ -39,6 +41,47 @@ LISTA_GEN *lista_gen_criar(int coluna1, int coluna2){
 
     return lista;
     
+    
+}
+
+int lista_gen_tamanho(LISTA_GEN *lista){
+    if (lista == NULL || lista->tamanho < 0)
+    {
+        return LISTA_GEN_ERRO;
+    }
+
+    return lista->tamanho;
+    
+}
+
+void apagar_nos(NO_GEN *no){
+    while (no != NULL)
+    {
+        NO_GEN *proximo = no->prox;
+        if (no->eh_atomo == 0)
+        {
+            apagar_nos(no->info.sublista.filhos);
+            free(no->info.sublista.rotulo);
+        }
+        free(no);
+        no = proximo;
+
+    }
+
+    
+    
+}
+
+void lista_gen_apagar(LISTA_GEN **lista){
+    if (lista == NULL || *lista == NULL)
+    {
+        return;
+
+    }
+
+    apagar_nos((*lista)->inicio);
+    free(*lista);
+    *lista = NULL;
     
 }
 
