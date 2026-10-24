@@ -82,3 +82,14 @@ char **csv_separar_em_strings(char *linha, int *qtd_campos){
     free(buf);
     return campos;
 }
+
+void csv_liberar_memoria_separada(char **campos, int qtd_campos){
+    if(campos == NULL){
+        return;
+    }
+    for(int i = 0; i < qtd_campos; i++){
+            free(campos[i]);
+    }
+    free(campos);
+    return;
+}
