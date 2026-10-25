@@ -28,7 +28,7 @@ int lista_gen_percorrer(LISTA_GEN *lista, void (*visitar) (ITEM *));
 int lista_gen_tamanho(LISTA_GEN *lista);
 
 // libera a lista (nós e rótulos) e deixa *lista = NULL.
-// NÃO apaga os ITEMs: quem criou os itens continua responsável pelo item_apagar
-void lista_gen_apagar(LISTA_GEN **lista);
+// Se a flag apagar_itens for true apaga também os ITEMs
+void lista_gen_apagar(LISTA_GEN **lista, bool apagar_itens);
 
 #endif

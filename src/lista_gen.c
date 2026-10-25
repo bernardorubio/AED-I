@@ -67,16 +67,19 @@ int lista_gen_tamanho(LISTA_GEN *lista){
 //aux
 
 // mesma lógica do percorrer_nos, mas libera cada nó do nível e, recursivamente, tudo abaixo dele
-static void apagar_nos(NO_GEN *no){
+static void apagar_nos(NO_GEN *no, bool apagar_itens){
     while (no != NULL)
     {
         NO_GEN *proximo = no->prox; // guardar antes do free, depois dele o nó não pode mais ser lido
         if (no->eh_atomo == 0)
         {
-            apagar_nos(no->info.sublista.filhos);
+            apagar_nos(no->info.sublista.filhos, apagar_itens);
             free(no->info.sublista.rotulo);
         }
-        // átomo: o ITEM não é liberado aqui, quem libera é quem criou o item (estrutura base)
+        else if(no->eh_atomo == 1 && apagar_itens == true){
+            item_apagar(&no->info.atomo);
+
+        }
         free(no);
         no = proximo;
 
@@ -86,14 +89,14 @@ static void apagar_nos(NO_GEN *no){
     
 }
 
-void lista_gen_apagar(LISTA_GEN **lista){
+void lista_gen_apagar(LISTA_GEN **lista, bool apagar_itens){
     if (lista == NULL || *lista == NULL)
     {
         return;
 
     }
 
-    apagar_nos((*lista)->inicio);
+    apagar_nos((*lista)->inicio, apagar_itens);
     free(*lista);
     *lista = NULL;
     
