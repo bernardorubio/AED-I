@@ -20,9 +20,12 @@ struct lista_cruz{
     CABECA *inicio_colunas;
     CABECA *inicio_linhas;
 
-    int linha;
-    int coluna;
+    int campo_linha;
+    int campo_coluna;
 
     int tamanho;
+
+    CABECA *atual_cabeca;
+    NO_CRUZ *atual;
     
 };
