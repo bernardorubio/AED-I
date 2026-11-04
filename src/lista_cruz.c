@@ -1,6 +1,8 @@
 #include "item.h"
 #include "lista_cruz.h"
 
+#include <stdlib.h>
+
 typedef struct no_cruz
 {
     ITEM *item;
@@ -29,3 +31,30 @@ struct lista_cruz{
     NO_CRUZ *atual;
     
 };
+
+
+LISTA_CRUZ *lista_cruz_criar(int campo_linha, int campo_coluna){
+    if (campo_linha < 0 || campo_coluna < 0 )
+    {
+        return NULL;
+
+    }
+
+    LISTA_CRUZ *lista = (LISTA_CRUZ *)malloc(sizeof(LISTA_CRUZ));
+
+
+    if (lista != NULL)
+    {
+        lista->campo_linha = campo_linha;
+        lista->campo_coluna = campo_coluna;
+        lista->tamanho = 0;
+        lista->atual_cabeca = NULL;
+        lista->atual = NULL;
+        lista->inicio_colunas = NULL;
+        lista->inicio_linhas = NULL;
+    }
+    
+
+    return lista;
+    
+}
