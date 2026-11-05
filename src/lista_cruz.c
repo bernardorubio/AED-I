@@ -252,4 +252,74 @@ int lista_cruz_tamanho(LISTA_CRUZ *lista){
     
 }
 
+static void apagar_nos(NO_CRUZ *no, bool apagar_itens){
+    if (no == NULL)
+    {
+        return;
+    }
+
+    while (no != NULL)
+    {
+        
+        NO_CRUZ *proximo_linha = no->prox_linha;
+
+        if (apagar_itens == true)
+        {
+            item_apagar(&no->item);
+        }
+
+        free(no);
+
+        no = proximo_linha;
+        
+    }
+    
+    
+}
+
+static void apagar_cabeca(CABECA *cabeca){
+    if (cabeca == NULL)
+    {
+        return;
+    }
+
+    while (cabeca != NULL)
+    {
+        CABECA *prox = cabeca->prox;
+
+        free(cabeca->rotulo);
+        free(cabeca);
+
+        cabeca = prox;
+        
+    }
+    
+    
+}
+
+void lista_cruz_apagar(LISTA_CRUZ **lista, bool apagar_itens){
+    if (lista ==  NULL || *lista == NULL)
+    {
+        return;
+    }
+
+    CABECA *atual_linha = (*lista)->inicio_linhas;
+
+    while (atual_linha != NULL)
+    {
+        CABECA *proximo_linha = atual_linha->prox;
+
+        apagar_nos(atual_linha->primeiro, apagar_itens);
+
+        atual_linha = proximo_linha;
+
+    }
+
+   apagar_cabeca((*lista)->inicio_linhas);
+   apagar_cabeca((*lista)->inicio_colunas);
+    
+    free(*lista);
+    *lista = NULL;
+}
+
 
