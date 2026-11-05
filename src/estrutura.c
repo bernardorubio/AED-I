@@ -13,6 +13,7 @@
 #include "lista_cabeca.h"
 #include "lista_ord.h"
 #include "lista_gen.h"
+#include "lista_cruz.h"
 
 typedef enum {
     est_pilha,
@@ -163,6 +164,9 @@ ESTRUTURA *estrutura_criar(char *nome, QUERY *q){
             }
             break;
         case est_lista_cruz:
+            if(query_get_cross(q, &coluna1, &coluna2)){
+                e->dados = lista_cruz_criar(coluna1, coluna2);
+            }
             break;
     }
     if(e->dados == NULL){
@@ -204,7 +208,7 @@ bool estrutura_inserir(ESTRUTURA *e, ITEM *item){
         case est_lista_gen:
             return lista_gen_inserir(e->dados, item);
         case est_lista_cruz:
-            return false;
+            return lista_cruz_inserir(e->dados, item);
     }
     return false;
 }
@@ -249,7 +253,7 @@ ITEM *estrutura_primeiro(ESTRUTURA *e){
             gen_pos = 0;
             return estrutura_proximo(e);
         case est_lista_cruz:
-            return NULL;
+            return lista_cruz_primeiro(e->dados);
     }
     return NULL;
 }
@@ -278,7 +282,7 @@ ITEM *estrutura_proximo(ESTRUTURA *e){
             e->pos_gen++;
             return e->vetor_gen[e->pos_gen - 1];
         case est_lista_cruz:
-            return NULL;
+            return lista_cruz_proximo(e->dados);
     }
     return NULL;
 }
@@ -323,8 +327,11 @@ void estrutura_apagar(ESTRUTURA **e, bool apagar_itens){
             lista_gen_apagar(&l, apagar_itens);
             break;
         }
-        case est_lista_cruz:
+        case est_lista_cruz: {
+            LISTA_CRUZ *l = (*e)->dados;
+            lista_cruz_apagar(&l, apagar_itens);
             break;
+        }
     }
     free((*e)->vetor_gen);
     free(*e);
