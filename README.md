@@ -58,4 +58,4 @@ CROSS|threat_category|year
 - 
 ## Grupo
 
-Bernardo Rubio, Samuel Gurgel, CAio andrade
+Bernardo Rubio, Samuel Gurgel, Caio andrade
