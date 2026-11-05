@@ -113,7 +113,7 @@ ITEM *nasa_proximo_item(LEITOR *l, bool *terminou){
             continue;
         }
         int qtdl;
-        char **campos = csv_separar_em_strings(linha, &qtdl);
+        char **campos = csv_separar_em_strings(linha, &qtdl, ',');
         if(campos == NULL){ 
             free(linha);
             *terminou = false;
