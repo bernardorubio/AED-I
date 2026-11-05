@@ -322,4 +322,75 @@ void lista_cruz_apagar(LISTA_CRUZ **lista, bool apagar_itens){
     *lista = NULL;
 }
 
+ITEM *lista_cruz_primeiro(LISTA_CRUZ *lista){
+    if (lista == NULL)
+    {
+        return NULL;
+    }
+
+    lista->atual_cabeca = lista->inicio_linhas;
+
+    
+    while (lista->atual_cabeca != NULL && lista->atual_cabeca->primeiro == NULL)
+    {
+        lista->atual_cabeca = lista->atual_cabeca->prox;
+
+    }
+
+    if (lista->atual_cabeca == NULL)
+    {
+        lista->atual = NULL;
+        return NULL;
+    }
+    else{
+        lista->atual = lista->atual_cabeca->primeiro;
+
+        return lista->atual->item;
+    }
+    
+    
+
+
+    
+}
+
+ITEM *lista_cruz_proximo(LISTA_CRUZ *lista){
+    if (lista == NULL || lista->atual == NULL)
+    {
+        return NULL;
+    }
+
+    lista->atual = lista->atual->prox_linha;
+
+    if (lista->atual != NULL)
+    {
+        return lista->atual->item;
+    }
+    
+
+    lista->atual_cabeca = lista->atual_cabeca->prox;
+
+    while (lista->atual_cabeca != NULL && lista->atual_cabeca->primeiro == NULL)
+    {
+        lista->atual_cabeca = lista->atual_cabeca->prox;
+    }
+    if (lista->atual_cabeca == NULL)
+    {
+        lista->atual = NULL;
+        return NULL;
+    }
+    else{
+        lista->atual = lista->atual_cabeca->primeiro;
+
+        return lista->atual->item;
+    }
+    
+    
+    
+    
+
+
+    
+}
+
 
