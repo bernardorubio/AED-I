@@ -22,7 +22,7 @@ nasa.o: src/nasa.c src/nasa.h src/csv.h src/schema.h src/item.h
 	$(CC) $(CFLAGS) -c src/nasa.c
 query.o: src/query.c src/query.h src/schema.h src/item.h src/csv.h
 	$(CC) $(CFLAGS) -c src/query.c
-estrutura.o: src/estrutura.c src/estrutura.h src/item.h src/query.h src/schema.h src/pilha.h src/fila.h src/lista_seq.h src/lista_enc.h src/lista_cabeca.h src/lista_ord.h src/lista_gen.h
+estrutura.o: src/estrutura.c src/estrutura.h src/item.h src/query.h src/schema.h src/pilha.h src/fila.h src/lista_seq.h src/lista_enc.h src/lista_cabeca.h src/lista_ord.h src/lista_gen.h src/lista_cruz.h
 	$(CC) $(CFLAGS) -c src/estrutura.c
 pilha.o: src/pilha.c src/pilha.h src/item.h
 	$(CC) $(CFLAGS) -c src/pilha.c
