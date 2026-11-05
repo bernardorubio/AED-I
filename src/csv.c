@@ -17,7 +17,7 @@ static char *copiar_string_alocando(char *origem){
     return alvo;
 }
 
-char **csv_separar_em_strings(char *linha, int *qtd_campos){
+char **csv_separar_em_strings(char *linha, int *qtd_campos, char limitador){
     bool aspas = false;
     char **campos;
     int cont = 0;
@@ -30,7 +30,7 @@ char **csv_separar_em_strings(char *linha, int *qtd_campos){
         if (linha[i] == '"'){
             aspas = !aspas;
         }
-        if(linha[i] == ',' && aspas == false){
+        if(linha[i] == limitador && aspas == false){
             cont++;
         }
     }
@@ -47,7 +47,7 @@ char **csv_separar_em_strings(char *linha, int *qtd_campos){
         if(linha[i] == '"'){
             aspas = !aspas;
         }
-        if(linha[i] == ',' && aspas == false){
+        if(linha[i] == limitador && aspas == false){
             buf[posicao] = '\0';
             campos[*qtd_campos] = copiar_string_alocando(buf);
             if(campos[*qtd_campos] == NULL){
