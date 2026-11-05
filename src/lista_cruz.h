@@ -34,6 +34,12 @@ ITEM *lista_cruz_primeiro(LISTA_CRUZ *lista);
 
 ITEM *lista_cruz_proximo(LISTA_CRUZ *lista);
 
+//as proximas duas funções são praticamente iguais às anteriores, porém percorremos por meio das colunas
+
+ITEM *lista_cruz_primeiro_coluna(LISTA_CRUZ *lista);
+
+ITEM *lista_cruz_proximo_coluna(LISTA_CRUZ *lista);
+
 
 #endif
 

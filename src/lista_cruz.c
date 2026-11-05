@@ -415,11 +415,70 @@ ITEM *lista_cruz_proximo(LISTA_CRUZ *lista){
     }
     
     
+}
+
+ITEM *lista_cruz_primeiro_coluna(LISTA_CRUZ *lista){
+    if (lista == NULL)
+    {
+        return NULL;
+    }
+
+    lista->atual_cabeca = lista->inicio_colunas; // sempre recomeça do início
+
+    // pula colunas vazias (só acontece se o inserir falhou depois de criar a cabeça)
+    while (lista->atual_cabeca != NULL && lista->atual_cabeca->primeiro == NULL)
+    {
+        lista->atual_cabeca = lista->atual_cabeca->prox;
+
+    }
+
+    if (lista->atual_cabeca == NULL)
+    {
+        lista->atual = NULL;
+        return NULL;
+    }
+    else{
+        lista->atual = lista->atual_cabeca->primeiro;
+
+        return lista->atual->item;
+    }
     
     
+}
+
+ITEM *lista_cruz_proximo_coluna(LISTA_CRUZ *lista){
+    if (lista == NULL || lista->atual == NULL) // atual NULL = já acabou ou ninguém chamou o primeiro
+    {
+        return NULL;
+    }
+
+    // anda um nó na mesma coluna
+    lista->atual = lista->atual->prox_coluna;
+
+    if (lista->atual != NULL)
+    {
+        return lista->atual->item;
+    }
 
 
-    
+    // a coluna acabou: vai para a próxima cabeça (não para o início) e faz igual ao primeiro
+    lista->atual_cabeca = lista->atual_cabeca->prox;
+
+    while (lista->atual_cabeca != NULL && lista->atual_cabeca->primeiro == NULL)
+    {
+        lista->atual_cabeca = lista->atual_cabeca->prox;
+    }
+    if (lista->atual_cabeca == NULL)
+    {
+        lista->atual = NULL;
+        return NULL;
+    }
+    else{
+        lista->atual = lista->atual_cabeca->primeiro;
+
+        return lista->atual->item;
+    }
+
 }
 
 
