@@ -6,6 +6,8 @@
 
 #include "item.h"
 
+#define ERRO_LISTA_CRUZ -1
+
 typedef struct lista_cruz LISTA_CRUZ;
 
 LISTA_CRUZ *lista_cruz_criar(int campo_linha, int campo_coluna);

@@ -241,3 +241,15 @@ bool lista_cruz_inserir(LISTA_CRUZ *lista, ITEM *item){
 
 
 }
+
+int lista_cruz_tamanho(LISTA_CRUZ *lista){
+    if (lista == NULL)
+    {
+        return ERRO_LISTA_CRUZ;
+    }
+
+    return lista->tamanho;
+    
+}
+
+
