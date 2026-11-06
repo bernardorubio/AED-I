@@ -8,18 +8,18 @@
 #include "nasa.h"
 #define TAM_MAX 1000
 
-struct leitor_{
+struct leitor_nasa_{
     FILE *f;
     int limite;
     int lidos;
     int qtd_col;
 };
 
-LEITOR *nasa_abrir_arquivo(char *caminho, int limite, SCHEMA **s){
+LEITOR_NASA *nasa_abrir_arquivo(char *caminho, int limite, SCHEMA **s){
     if(s == NULL || caminho == NULL){
         return NULL;
     }
-    LEITOR *l = malloc(sizeof(LEITOR));
+    LEITOR_NASA *l = malloc(sizeof(LEITOR_NASA));
     if(l == NULL){
         *s = NULL;
         return NULL;
@@ -53,7 +53,7 @@ LEITOR *nasa_abrir_arquivo(char *caminho, int limite, SCHEMA **s){
             break;
         }
     }
-    SCHEMA *head = schema_criar(linha);
+    SCHEMA *head = schema_criar(linha, ',');
     if(head == NULL){
         fclose(l->f);
         free(l);
@@ -69,7 +69,7 @@ LEITOR *nasa_abrir_arquivo(char *caminho, int limite, SCHEMA **s){
     return l;
 }
 
-ITEM *nasa_proximo_item(LEITOR *l, bool *terminou){
+ITEM *nasa_proximo_item(LEITOR_NASA *l, bool *terminou){
     if(l == NULL || terminou == NULL){
         return NULL;
     }
@@ -137,7 +137,7 @@ ITEM *nasa_proximo_item(LEITOR *l, bool *terminou){
     }
 }
 
-void nasa_apagar(LEITOR **l){
+void nasa_apagar(LEITOR_NASA **l){
     if(l == NULL || *l == NULL){
         return;
     }

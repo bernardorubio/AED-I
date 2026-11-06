@@ -7,6 +7,7 @@
 #include "item.h"
 #include "schema.h"
 #include "nasa.h"
+#include "cenipa.h"
 #include "query.h"
 #include "estrutura.h"
 
@@ -27,17 +28,19 @@ static bool ler_inteiro(char *texto, int *saida){
     return true;
 }
 
-static void liberar_tudo(ESTRUTURA **resultado, ESTRUTURA **base, LEITOR **l, QUERY **q, SCHEMA **s){
+//o resultado e apagado sem os itens (false) porque so guarda ponteiros; quem libera os itens e a base (true)
+static void liberar_tudo(ESTRUTURA **resultado, ESTRUTURA **base, LEITOR_NASA **l, LEITOR_CENIPA **lc, QUERY **q, SCHEMA **s){
     estrutura_apagar(resultado, false);
     estrutura_apagar(base, true);
     nasa_apagar(l);
+    cenipa_apagar(lc);
     query_apagar(q);
     schema_apagar(s);
     return;
 }
 
-static int erro(ESTRUTURA **resultado, ESTRUTURA **base, LEITOR **l, QUERY **q, SCHEMA **s){
-    liberar_tudo(resultado, base, l, q, s);
+static int erro(ESTRUTURA **resultado, ESTRUTURA **base, LEITOR_NASA **l, LEITOR_CENIPA **lc, QUERY **q, SCHEMA **s){
+    liberar_tudo(resultado, base, l, lc, q, s);
     printf("STATUS=ERRO\n");
     return 1;
 }
@@ -99,55 +102,73 @@ int main(int argc, char *argv[]){
         printf("STATUS=ERRO\n");
         return 1;
     }
-    if(strcmp(reader, "nasa") != 0){
+    //leitores aceitos: nasa (parte 1) e cenipa (parte 2)
+    bool eh_cenipa = (strcmp(reader, "cenipa") == 0);
+    if(strcmp(reader, "nasa") != 0 && !eh_cenipa){
         printf("STATUS=ERRO\n");
         return 1;
     }
 
     SCHEMA *s = NULL;
-    LEITOR *l = NULL;
+    LEITOR_NASA *l = NULL;
+    LEITOR_CENIPA *lc = NULL;
     QUERY *q = NULL;
     ESTRUTURA *base = NULL;
     ESTRUTURA *resultado = NULL;
 
-    l = nasa_abrir_arquivo(input, limit, &s);
-    if(l == NULL){
-        return erro(&resultado, &base, &l, &q, &s);
+    if(eh_cenipa){
+        lc = cenipa_abrir_arquivo(input, limit, &s);
+    }
+    else{
+        l = nasa_abrir_arquivo(input, limit, &s);
+    }
+    if(l == NULL && lc == NULL){
+        return erro(&resultado, &base, &l, &lc, &q, &s);
     }
     q = query_ler_arquivo(arq_query, s);
     if(q == NULL){
-        return erro(&resultado, &base, &l, &q, &s);
+        return erro(&resultado, &base, &l, &lc, &q, &s);
     }
+    //a base e criada depois de ler a consulta porque lista_ord, lista_gen e lista_cruz usam o ORDER, GROUP e CROSS na criacao
     base = estrutura_criar(nome_base, q);
     if(base == NULL){
-        return erro(&resultado, &base, &l, &q, &s);
+        return erro(&resultado, &base, &l, &lc, &q, &s);
     }
 
     int input_records = 0;
     double t_inicio = agora_ms();
     while(true){
         bool terminou;
-        ITEM *it = nasa_proximo_item(l, &terminou);
+        ITEM *it;
+        if(eh_cenipa){
+            it = cenipa_proximo_item(lc, &terminou);
+        }
+        else{
+            it = nasa_proximo_item(l, &terminou);
+        }
         if(it == NULL){
             if(terminou){
                 break;
             }
-            return erro(&resultado, &base, &l, &q, &s);
+            return erro(&resultado, &base, &l, &lc, &q, &s);
         }
         if(!estrutura_inserir(base, it)){
             item_apagar(&it);
-            return erro(&resultado, &base, &l, &q, &s);
+            return erro(&resultado, &base, &l, &lc, &q, &s);
         }
         input_records++;
     }
     double load_ms = agora_ms() - t_inicio;
     nasa_apagar(&l);
+    cenipa_apagar(&lc);
 
     resultado = estrutura_criar(nome_resultado, q);
     if(resultado == NULL){
-        return erro(&resultado, &base, &l, &q, &s);
+        return erro(&resultado, &base, &l, &lc, &q, &s);
     }
 
+    //busca: percorre a base e insere os aceitos no --result.
+    //o tempo das insercoes e somado a parte e descontado do tempo da busca
     int matched_records = 0;
     double insert_ms = 0.0;
     t_inicio = agora_ms();
@@ -157,18 +178,20 @@ int main(int argc, char *argv[]){
             bool ok = estrutura_inserir(resultado, it);
             insert_ms += agora_ms() - t_insere;
             if(!ok){
-                return erro(&resultado, &base, &l, &q, &s);
+                return erro(&resultado, &base, &l, &lc, &q, &s);
             }
             matched_records++;
         }
     }
     double search_ms = agora_ms() - t_inicio - insert_ms;
 
+    //saida: cabecalho e os primeiros k itens na ordem de acesso do --result,
+    //com \r\n no fim de cada linha, igual aos arquivos de entrada (nasa e cenipa)
     int output_records = 0;
     t_inicio = agora_ms();
     FILE *saida = fopen(output, "w");
     if(saida == NULL){
-        return erro(&resultado, &base, &l, &q, &s);
+        return erro(&resultado, &base, &l, &lc, &q, &s);
     }
     fprintf(saida, "%s\r\n", schema_get_header(s));
     for(ITEM *it = estrutura_primeiro(resultado); it != NULL; it = estrutura_proximo(resultado)){
@@ -178,8 +201,8 @@ int main(int argc, char *argv[]){
         fprintf(saida, "%s\r\n", item_get_linha(it));
         output_records++;
     }
-    if(fclose(saida) != 0){ //fclose descarrega buffer entao pode ter stoudt=erro aq;
-        return erro(&resultado, &base, &l, &q, &s);
+    if(fclose(saida) != 0){ //o fclose grava o que ainda estava no buffer, entao um erro de escrita pode aparecer so aqui
+        return erro(&resultado, &base, &l, &lc, &q, &s);
     }
     double write_ms = agora_ms() - t_inicio;
 
@@ -192,6 +215,6 @@ int main(int argc, char *argv[]){
     printf("RESULT_INSERT_MS=%.3f\n", insert_ms);
     printf("WRITE_MS=%.3f\n", write_ms);
 
-    liberar_tudo(&resultado, &base, &l, &q, &s);
+    liberar_tudo(&resultado, &base, &l, &lc, &q, &s);
     return 0;
 }
