@@ -2,7 +2,7 @@ CC = gcc
 CFLAGS = -std=c11 -Wall -Wextra -pedantic
 LDLIBS = -lm
 
-OBJS = main.o item.o csv.o schema.o nasa.o query.o estrutura.o \
+OBJS = main.o item.o csv.o schema.o nasa.o cenipa.o query.o estrutura.o \
        pilha.o fila.o lista_seq.o lista_enc.o lista_cabeca.o lista_ord.o lista_gen.o lista_cruz.o
 
 all: trabalho
@@ -10,7 +10,7 @@ all: trabalho
 trabalho: $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o trabalho $(LDLIBS)
 
-main.o: src/main.c src/item.h src/schema.h src/nasa.h src/query.h src/estrutura.h
+main.o: src/main.c src/item.h src/schema.h src/nasa.h src/cenipa.h src/query.h src/estrutura.h
 	$(CC) $(CFLAGS) -c src/main.c
 item.o: src/item.c src/item.h
 	$(CC) $(CFLAGS) -c src/item.c
@@ -20,6 +20,8 @@ schema.o: src/schema.c src/schema.h src/csv.h
 	$(CC) $(CFLAGS) -c src/schema.c
 nasa.o: src/nasa.c src/nasa.h src/csv.h src/schema.h src/item.h
 	$(CC) $(CFLAGS) -c src/nasa.c
+cenipa.o: src/cenipa.c src/cenipa.h src/csv.h src/schema.h src/item.h
+	$(CC) $(CFLAGS) -c src/cenipa.c
 query.o: src/query.c src/query.h src/schema.h src/item.h src/csv.h
 	$(CC) $(CFLAGS) -c src/query.c
 estrutura.o: src/estrutura.c src/estrutura.h src/item.h src/query.h src/schema.h src/pilha.h src/fila.h src/lista_seq.h src/lista_enc.h src/lista_cabeca.h src/lista_ord.h src/lista_gen.h src/lista_cruz.h

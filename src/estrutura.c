@@ -34,16 +34,21 @@ struct estrutura_{
     int pos_gen;
 };
 
+//chave do ORDER usada pelo comparador da lista_ord. o comparador so recebe os dois itens,
+//entao a coluna e a direcao ficam aqui e sao preenchidas no estrutura_criar
 static int ord_coluna = -1;
 static bool ord_similaridade = false;
 static bool ord_decrescente = false;
 
+//sem ORDER na consulta: todos empatam, e a lista_ord mantem a ordem de chegada
 static int comparar_nada(ITEM *a, ITEM *b){
     (void)a;
     (void)b;
     return 0;
 }
 
+//compara pela similaridade ou pela coluna do ORDER. numero compara como numero, texto como texto,
+//campo vazio vai para o fim; com DESC o sinal e invertido
 static int comparar_order(ITEM *a, ITEM *b){
     int cmp;
     if(ord_similaridade){
@@ -112,6 +117,8 @@ static bool tipo_do_nome(char *nome, TIPO_EST *tipo){
     return true;
 }
 
+//cria a estrutura escolhida. lista_ord pega o ORDER, lista_gen o GROUP e lista_cruz o CROSS da consulta;
+//lista_gen sem GROUP ou lista_cruz sem CROSS devolve NULL (o main imprime STATUS=ERRO)
 ESTRUTURA *estrutura_criar(char *nome, QUERY *q){
     if(nome == NULL || q == NULL){
         return NULL;
@@ -176,10 +183,13 @@ ESTRUTURA *estrutura_criar(char *nome, QUERY *q){
     return e;
 }
 
+//a lista_gen percorre com callback (lista_gen_percorrer), que so recebe o item;
+//estas variaveis dizem ao callback em qual vetor e posicao copiar
 static ITEM **gen_destino = NULL;
 static int gen_tam = 0;
 static int gen_pos = 0;
 
+//callback da lista_gen: copia cada item visitado para o vetor, na ordem grupo por grupo
 static void copiar_para_vetor(ITEM *item){
     if(gen_pos < gen_tam){
         gen_destino[gen_pos] = item;
@@ -213,6 +223,8 @@ bool estrutura_inserir(ESTRUTURA *e, ITEM *item){
     return false;
 }
 
+//comeca o percurso e devolve o primeiro item. na lista_gen, copia todos os itens para um vetor
+//e passa a percorrer o vetor, para funcionar com primeiro/proximo como as outras
 ITEM *estrutura_primeiro(ESTRUTURA *e){
     if(e == NULL){
         return NULL;

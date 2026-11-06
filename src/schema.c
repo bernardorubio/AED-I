@@ -27,7 +27,7 @@ static char *copiar_string_alocando(char *origem){
 }
 
 
-SCHEMA *schema_criar(char *linha){
+SCHEMA *schema_criar(char *linha, char separador){
     if(linha == NULL){
         return NULL;
     }
@@ -41,7 +41,7 @@ SCHEMA *schema_criar(char *linha){
         return NULL;
     }
     int qtd_campos = 0;
-    s->campos = csv_separar_em_strings(s->linha, &qtd_campos, ',');
+    s->campos = csv_separar_em_strings(s->linha, &qtd_campos, separador);
     if(s->campos == NULL || qtd_campos == -1){
         free(s->linha);
         free(s);

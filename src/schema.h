@@ -4,7 +4,7 @@
 
 typedef struct schema_ SCHEMA;
 
-SCHEMA *schema_criar(char* cabecalho);//recebe linha 1 arq e devolve o schema
+SCHEMA *schema_criar(char* cabecalho, char separador); //recebe a linha 1 do arquivo e o separador de colunas da base (',' na nasa, ';' no cenipa) e devolve o schema
 int schema_indice_nome(SCHEMA *s, char *nome); //indiciar nomes
 int schema_n_colunas(SCHEMA *s); //recebe schema e devolve ncolunas
 const char *schema_get_header(SCHEMA *s); //geter pra saída
