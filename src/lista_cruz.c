@@ -27,6 +27,7 @@ typedef struct cabeca
 {
     char *rotulo; // valor do campo (ex.: "alta", "2021"), cópia alocada pela lista
     NO_CRUZ *primeiro; // primeiro nó da linha/coluna
+    NO_CRUZ *ultimo; // último nó, para inserir no fim sem percorrer a linha/coluna inteira
     struct cabeca *prox; // próxima cabeça do mesmo tipo
 }CABECA;
 
@@ -64,6 +65,7 @@ LISTA_CRUZ *lista_cruz_criar(int campo_linha, int campo_coluna){
         lista->atual = NULL;
         lista->inicio_colunas = NULL;
         lista->inicio_linhas = NULL;
+
     }
     
 
@@ -101,6 +103,7 @@ static CABECA *criar_cabeca(const char *rotulo){
 
     cabeca->prox = NULL;
     cabeca->primeiro = NULL;
+    cabeca->ultimo = NULL;
 
 
     return cabeca;
@@ -209,7 +212,8 @@ bool lista_cruz_inserir(LISTA_CRUZ *lista, ITEM *item){
         
     }
 
-    // 3) cria o nó e pendura no fim da linha e no fim da coluna (é o mesmo nó nas duas)
+    // 3) cria o nó e pendura no fim da linha e no fim da coluna (é o mesmo nó nas duas).
+    // usa o ultimo da cabeça em vez de andar até o fim: antes o inserir ficava O(n) e com a base inteira demorava demais
     // se falhar aqui, uma cabeça criada acima pode ficar vazia; não vaza, o apagar libera e o percorrer pula ela
     NO_CRUZ *no = criar_no(item);
 
@@ -218,42 +222,28 @@ bool lista_cruz_inserir(LISTA_CRUZ *lista, ITEM *item){
         return false;
     }
 
-    if (cursor_linha->primeiro == NULL) // linha vazia: o nó vira o primeiro
+    if (cursor_linha->primeiro == NULL) // linha vazia: o nó é o primeiro e o último ao mesmo tempo
     {
         cursor_linha->primeiro = no;
+        cursor_linha->ultimo = no;
     }
 
     else{
-
-        NO_CRUZ *cursor_linha_no = cursor_linha->primeiro;
-
-        while (cursor_linha_no->prox_linha != NULL) // testa o prox para parar em cima do último nó, e não depois dele (NULL)
-        {
-
-        cursor_linha_no = cursor_linha_no->prox_linha;
-
-        }
-
-        cursor_linha_no->prox_linha = no;
+        cursor_linha->ultimo->prox_linha = no; // primeiro liga o antigo último no novo, depois atualiza (se inverter, perde o antigo)
+        cursor_linha->ultimo = no;
 
     }
 
-    if (cursor_coluna->primeiro == NULL)
+    if (cursor_coluna->primeiro == NULL) // mesma coisa na coluna, só que pelo prox_coluna
     {
         cursor_coluna->primeiro = no;
+        cursor_coluna->ultimo = no;
     }
 
     else{
-        NO_CRUZ *cursor_coluna_no = cursor_coluna->primeiro;
+        cursor_coluna->ultimo->prox_coluna = no;
+        cursor_coluna->ultimo = no;
 
-        while (cursor_coluna_no->prox_coluna != NULL) // aqui anda pelo prox_coluna, não pelo prox_linha
-        {
-
-            cursor_coluna_no = cursor_coluna_no->prox_coluna;
-
-        }
-        
-        cursor_coluna_no->prox_coluna = no;
     }
 
     lista->tamanho++;
